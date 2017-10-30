@@ -1116,6 +1116,7 @@ object Main {
     Insert_Builds(db, tuples)
     Insert_IDEStates(db, tuples)
     Insert_Commands(db, tuples)
+    Insert_VersionControls(db, tuples)
   }
 
   def getRecursiveListOfFiles(dir: File): Array[File] = {
