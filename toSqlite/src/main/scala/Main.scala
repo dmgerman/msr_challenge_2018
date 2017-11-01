@@ -334,13 +334,13 @@ object Main {
   case class VC_ActionClassDB (
     idesessionuuid: String,
     triggeredat: String,
-    testtype : String,
+    vctype : String,
     executedat: String,
     actiontype: Int
   )
 
   case class VC_ActionClass (
-    testtype : String,
+    vctype : String,
     executedat: String,
     actiontype: Int
   )
@@ -364,7 +364,7 @@ object Main {
 
   def toVC_ActionsDB(b: VersionControlClass) =
     b.actions.map{ a =>
-      VC_ActionClassDB(b.idesessionuuid, b.triggeredat, a.testtype, a.executedat, a.actiontype)
+      VC_ActionClassDB(b.idesessionuuid, b.triggeredat, a.vctype, a.executedat, a.actiontype)
     }
 
   def toBuildClassDB(b: BuildClass) =
@@ -693,10 +693,10 @@ object Main {
     
     def idesessionuuid = column[String]("idesessionuuid", O.SqlType("TEXT"))
     def triggeredat = column[String]("triggeredat", O.SqlType("TEXT"))
-    def testtype = column[String]("testtype", O.SqlType("TEXT"))
+    def vctype = column[String]("vctype", O.SqlType("TEXT"))
     def executedat = column[String]("executedat", O.SqlType("TEXT"))
     def actiontype = column[Int]("actiontype", O.SqlType("TEXT"))
-    def * = (idesessionuuid, triggeredat, testtype, executedat, actiontype) <>
+    def * = (idesessionuuid, triggeredat, vctype, executedat, actiontype) <>
     (VC_ActionClassDB.tupled, VC_ActionClassDB.unapply)
   }
 

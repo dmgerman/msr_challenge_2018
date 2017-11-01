@@ -1,0 +1,99 @@
+#+STARTUP: showall
+#+STARTUP: lognotestate
+#+TAGS:
+#+SEQ_TODO: TODO STARTED DONE DEFERRED CANCELLED | WAITING DELEGATED APPT
+#+DRAWERS: HIDDEN STATE
+#+TITLE: 
+#+CATEGORY: 
+#+PROPERTY: header-args:sql             :engine postgresql  :exports both :cmdline csc370
+#+PROPERTY: header-args:sqlite          :db /path/to/db  :colnames yes
+#+PROPERTY: header-args:C++             :results output :flags -std=c++14 -Wall --pedantic -Werror
+#+PROPERTY: header-args:R               :results output  :colnames yes
+#+OPTIONS: ^:nil
+
+* What we know about the records:
+
+these are the enumerations for some fields. Extracted from their C# code: https://github.com/kave-cc/csharp-commons
+
+** version control event types
+
+#+BEGIN_EXAMPLE
+Unknown = 0,
+        Branch,
+        Checkout,
+        Clone,
+        Commit,
+        CommitAmend,
+        CommitInitial,
+        Merge,
+        Pull,
+        Rebase,
+        RebaseFinished,
+        Reset
+#+END_EXAMPLE
+
+create table vctypes(actiontype int, action char(20));
+insert into vctypes values (0, 'Unknown');
+insert into vctypes values (1, 'Branch');
+insert into vctypes values (2, 'Checkout');
+insert into vctypes values (3, 'Clone');
+insert into vctypes values (4, 'Commit');
+insert into vctypes values (5, 'CommitAmend');
+insert into vctypes values (6, 'CommitInitial');
+insert into vctypes values (7, 'Merge');
+insert into vctypes values (8, 'Pull');
+insert into vctypes values (9, 'Rebase');
+insert into vctypes values (10, 'RebaseFinished');
+insert into vctypes values (11, 'Reset);
+
+
+
+** rest
+
+
+#+BEGIN_EXAMPLE
+
+
+test results:
+public enum TestResult
+    {
+        Unknown,
+        Success,
+        Failed,
+        Error,
+        Ignored
+    }
+
+navigationtype:
+
+    public enum NavigationType
+    {
+        Unknown = 0,
+        CtrlClick,
+        Click,
+        Keyboard
+    }
+
+debugger:
+
+    public enum DebuggerMode
+    {
+        Design,
+        Run,
+        Break,
+        ExceptionThrown,
+        ExceptionNotHandled
+    }
+
+system events: 
+   public enum SystemEventType
+    {
+        Unknown,
+        Suspend,
+        Resume,
+        Lock,
+        Unlock,
+        RemoteConnect,
+        RemoteDisconnect
+    }
+#+END_EXAMPLE
