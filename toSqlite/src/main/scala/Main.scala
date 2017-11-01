@@ -39,7 +39,7 @@ object Main {
   case class EditClass(
     typeid: String,
     // TODO
-//    context2: String,
+    //    context2: String,
     numberChanges: Int,
     idesessionuuid: String,
     kaveversion: String,
@@ -53,7 +53,7 @@ object Main {
     typeid: String,
     typeval : Int,
     // TODO
-//    context2: String,
+    //    context2: String,
     idesessionuuid: String,
     kaveversion: String,
     triggeredat: String,
@@ -62,6 +62,19 @@ object Main {
     activewindow: Option[String],
     activedocument: Option[String]
   )
+
+  case class FindClass(
+    typeid: String,
+    cancelled: Boolean,
+    idesessionuuid: String,
+    kaveversion: String,
+    triggeredat: String,
+    triggeredby: Int,
+    duration: Option[String],
+    activewindow: Option[String],
+    activedocument: Option[String]
+  )
+
 
   case class WindowClass(
     typeid: String,
@@ -97,7 +110,8 @@ object Main {
     duration: Option[String],
     activewindow: String,
     activedocument: Option[String]
-  ) 
+  )
+
 
   case class NavClass(
     typeid: String,
@@ -111,7 +125,7 @@ object Main {
     duration: Option[String],
     activewindow: String,
     activedocument: Option[String]
-  ) 
+  )
 
   case class DebuggerClass(
     typeid: String,
@@ -124,7 +138,7 @@ object Main {
     duration: Option[String],
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   case class SolutionClass(
     typeid: String,
@@ -137,7 +151,7 @@ object Main {
     duration: Option[String],
     activewindow: String,
     activedocument: Option[String]
-  ) 
+  )
 
   case class DocumentClass(
     typeid: String,
@@ -150,7 +164,7 @@ object Main {
     duration: Option[String],
     activewindow: String,
     activedocument: Option[String]
-  ) 
+  )
 
   case class UserClass(
     profileid: String,
@@ -175,7 +189,7 @@ object Main {
     triggeredby: Int,
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   case class TargetClass (
     targettype : String,
@@ -228,6 +242,51 @@ object Main {
     activedocument: Option[String]
   )
 
+  case class TestCaseClass(
+    testcasetype: String,
+    testmethod: String,
+    parameters: String,
+    duration: String,
+    result: Int
+  )
+
+  case class TestCaseClassDB(
+    idesessionuuid: String,
+    triggeredat: String,
+    testcasetype: String,
+    testmethod: String,
+    parameters: String,
+    duration: String,
+    result: Int
+  )
+
+  case class TestClass(
+    typeid: String,
+    wasaborted: Boolean,
+    testcases: Seq[TestCaseClass],
+    idesessionuuid: String,
+    kaveversion: String,
+    triggeredat: String,
+    triggeredby: Int,
+    duration: Option[String],
+    activewindow: Option[String],
+    activedocument: Option[String]
+
+  )
+
+  case class TestClassDB(
+    typeid: String,
+    wasaborted: Boolean,
+    idesessionuuid: String,
+    kaveversion: String,
+    triggeredat: String,
+    triggeredby: Int,
+    duration: Option[String],
+    activewindow: Option[String],
+    activedocument: Option[String]
+  )
+
+
   case class IDEStateClassDB(
     typeid: String,
     ideLifeCyclePhase: Int,
@@ -238,7 +297,7 @@ object Main {
     duration: Option[String],
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   case class IDEStateAttDB(
     idesessionuuid: String,
@@ -258,7 +317,7 @@ object Main {
     duration: Option[String],
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   case class VersionControlClassDB(
     typeid: String,
@@ -270,7 +329,7 @@ object Main {
     duration: Option[String],
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   case class VC_ActionClassDB (
     idesessionuuid: String,
@@ -297,14 +356,14 @@ object Main {
     duration: Option[String],
     activewindow: Option[String],
     activedocument: Option[String]
-  ) 
+  )
 
   def toVersionControlClassDB(b: VersionControlClass) =
     VersionControlClassDB(b.typeid, b.solution, b.idesessionuuid,
       b.kaveversion, b.triggeredat, b.triggeredby, b.duration, b.activewindow, b.activedocument)
 
   def toVC_ActionsDB(b: VersionControlClass) =
-    b.actions.map{ a => 
+    b.actions.map{ a =>
       VC_ActionClassDB(b.idesessionuuid, b.triggeredat, a.testtype, a.executedat, a.actiontype)
     }
 
@@ -314,8 +373,17 @@ object Main {
   def toTargetClassDB(b: BuildClass) =
     b.targets.map{ t =>
       TargetClassDB(b.idesessionuuid, b.triggeredat,
-      t.targettype, t.project, t.projectConfiguration, t.platform, t.solutionConfiguration,
+        t.targettype, t.project, t.projectConfiguration, t.platform, t.solutionConfiguration,
         t.startedAt, t.duration, t.successful)
+    }
+
+  def toTestClassDB(b: TestClass) =
+    TestClassDB(b.typeid, b.wasaborted, b.idesessionuuid,
+      b.kaveversion, b.triggeredat, b.triggeredby, b.duration, b.activewindow, b.activedocument)
+  def toTestCaseClassDB(b: TestClass) =
+    b.testcases.map{ t =>
+      TestCaseClassDB(b.idesessionuuid, b.triggeredat,
+        t.testcasetype, t.testmethod, t.parameters, t.duration, t.result)
     }
 
   def toIDEStateClassDB(b: IDEStateClass) =
@@ -333,10 +401,10 @@ object Main {
     }
 
   /*
-  object BuildClassDB {
-    def apply(bar: BuildClass) = new BuildClassDB(bar)
-  }
- */
+   object BuildClassDB {
+   def apply(bar: BuildClass) = new BuildClassDB(bar)
+   }
+   */
   class Commands(tag:Tag) extends Table[CommandsClass](tag, "commands") {
     //(String, String, String, String, String, String, String, String, String)]
     
@@ -357,7 +425,7 @@ object Main {
     //(String, String, String, String, String, String, String, String, String)]
     
     def typeid = column[String]("typeid", O.SqlType("TEXT"))
-//    def context2 = column[String]("context2", O.SqlType("TEXT"))
+    //    def context2 = column[String]("context2", O.SqlType("TEXT"))
     def numberchanges = column[Int]("numberchanges", O.SqlType("Int"))
     def idesessionuuid = column[String]("idesessionuuid", O.SqlType("TEXT"))
     def kaveversion = column[String]("kaveversion", O.SqlType("TEXT"))
@@ -385,6 +453,23 @@ object Main {
       activewindow, activedocument) <> (SystemClass.tupled, SystemClass.unapply)
   }
 
+  class Finds(tag:Tag) extends Table[FindClass](tag, "finds") {
+    
+    def typeid = column[String]("typeid", O.SqlType("TEXT"))
+    def cancelled = column[Boolean]("type", O.SqlType("Boolean"))
+    def idesessionuuid = column[String]("idesessionuuid", O.SqlType("TEXT"))
+    def kaveversion = column[String]("kaveversion", O.SqlType("TEXT"))
+    def triggeredat = column[String]("triggeredat", O.SqlType("TEXT"))
+    def triggeredby = column[Int]("triggeredby", O.SqlType("Int"))
+    def duration = column[Option[String]]("duration", O.SqlType("TEXT"))
+    def activewindow = column[Option[String]]("activewindow", O.SqlType("TEXT"))
+    def activedocument = column[Option[String]]("activedocument", O.SqlType("TEXT"))
+    def * = (typeid, cancelled, idesessionuuid, kaveversion, triggeredat, triggeredby, duration,
+      activewindow, activedocument) <> (FindClass.tupled, FindClass.unapply)
+  }
+
+
+
   class Activities(tag:Tag) extends Table[ActivityClass](tag, "activities") {
     //(String, String, String, String, String, String, String, String, String)]
     
@@ -398,6 +483,37 @@ object Main {
     def activedocument = column[Option[String]]("activedocument", O.SqlType("TEXT"))
     def * = (typeid, idesessionuuid, kaveversion, triggeredat, triggeredby, duration,
       activewindow, activedocument) <> (ActivityClass.tupled, ActivityClass.unapply)
+  }
+
+  class Tests(tag:Tag) extends Table[TestClassDB](tag, "tests") {
+
+    def typeid = column[String]("typeid", O.SqlType("TEXT"))
+    def wasaborted = column[Boolean]("wasaborted", O.SqlType("Boolean"))
+    def idesessionuuid = column[String]("idesessionuuid", O.SqlType("TEXT"))
+    def kaveversion = column[String]("kaveversion", O.SqlType("TEXT"))
+    def triggeredat = column[String]("triggeredat", O.SqlType("TEXT"))
+    def triggeredby = column[Int]("triggeredby", O.SqlType("Int"))
+    def duration = column[Option[String]]("duration", O.SqlType("TEXT"))
+    def activewindow = column[Option[String]]("activewindow", O.SqlType("TEXT"))
+    def activedocument = column[Option[String]]("activedocument", O.SqlType("TEXT"))
+
+    def * = (typeid, wasaborted, idesessionuuid,
+      kaveversion, triggeredat, triggeredby,
+      duration, activewindow, activedocument) <> (TestClassDB.tupled, TestClassDB.unapply)
+  }
+
+  class TestCases(tag:Tag) extends Table[TestCaseClassDB](tag, "testcases") {
+    //(String, String, String, String, String, String, String, String, String)]
+    
+    def idesessionuuid = column[String]("idesessionuuid", O.SqlType("TEXT"))
+    def triggeredat = column[String]("triggeredat", O.SqlType("TEXT"))
+    def testcasetype = column[String]("testcasetype", O.SqlType("TEXT"))
+    def testmethod = column[String]("testmethod", O.SqlType("TEXT"))
+    def parameters = column[String]("parameters", O.SqlType("TEXT"))
+    def duration = column[String]("duration", O.SqlType("TEXT"))
+    def result = column[Int]("result", O.SqlType("Int"))
+    def * = (idesessionuuid, triggeredat, testcasetype, testmethod,
+      parameters, duration, result) <> (TestCaseClassDB.tupled, TestCaseClassDB.unapply)
   }
 
   class Builds(tag:Tag) extends Table[BuildClassDB](tag, "builds") {
@@ -416,6 +532,8 @@ object Main {
     def * = (typeid, scope, action, idesessionuuid, kaveversion, triggeredat, triggeredby, duration,
       activewindow, activedocument) <> (BuildClassDB.tupled, BuildClassDB.unapply)
   }
+
+
 
   class Targets(tag:Tag) extends Table[TargetClassDB](tag, "targets") {
     //(String, String, String, String, String, String, String, String, String)]
@@ -524,7 +642,7 @@ object Main {
 
   class Users(tag:Tag) extends Table[UserClass](tag, "users") {
     
-//    def typeid = column[String]("typeid", O.SqlType("TEXT"))
+    //    def typeid = column[String]("typeid", O.SqlType("TEXT"))
     def profileid = column[String]("profileid", O.SqlType("TEXT"))
     def education = column[Int]("education", O.SqlType("Int"))
     def position = column[Int]("position", O.SqlType("Int"))
@@ -579,7 +697,7 @@ object Main {
     def executedat = column[String]("executedat", O.SqlType("TEXT"))
     def actiontype = column[Int]("actiontype", O.SqlType("TEXT"))
     def * = (idesessionuuid, triggeredat, testtype, executedat, actiontype) <>
-          (VC_ActionClassDB.tupled, VC_ActionClassDB.unapply)
+    (VC_ActionClassDB.tupled, VC_ActionClassDB.unapply)
   }
 
   class IDEStates(tag:Tag) extends Table[IDEStateClassDB](tag, "idestates") {
@@ -615,9 +733,9 @@ object Main {
     def att = column[String]("openwindow", O.SqlType("TEXT"))
     def * = (idesessionuuid, triggeredat, att) <> (IDEStateAttDB.tupled, IDEStateAttDB.unapply)
   }
- 
+  
   implicit val commandReads : Reads[CommandsClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "CommandId").read[String] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
@@ -629,7 +747,7 @@ object Main {
   )(CommandsClass.apply _)
 
   implicit val systemReads : Reads[SystemClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Type").read[Int] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
@@ -640,8 +758,43 @@ object Main {
       (JsPath \ "ActiveDocument").readNullable[String]
   )(SystemClass.apply _)
 
+  implicit val findReads : Reads[FindClass] = (
+    (JsPath \ "$type").read[String] and
+      (JsPath \ "Cancelled").read[Boolean] and
+      (JsPath \ "IDESessionUUID").read[String] and
+      (JsPath \ "KaVEVersion").read[String] and
+      (JsPath \ "TriggeredAt").read[String] and
+      (JsPath \ "TriggeredBy").read[Int] and
+      (JsPath \ "Duration").readNullable[String] and
+      (JsPath \ "ActiveWindow").readNullable[String] and
+      (JsPath \ "ActiveDocument").readNullable[String]
+  )(FindClass.apply _)
+
+
+  implicit val testCaseReads : Reads[TestCaseClass] = (
+    (JsPath \ "$type").read[String] and
+      (JsPath \ "TestMethod").read[String] and
+      (JsPath \ "Parameters").read[String] and
+      (JsPath \ "Duration").read[String] and
+      (JsPath \ "Result").read[Int]
+  )(TestCaseClass.apply _)
+
+  implicit val testReads : Reads[TestClass] = (
+    (JsPath \ "$type").read[String] and
+      (JsPath \ "WasAborted").read[Boolean] and
+      (JsPath \ "Tests").read[Seq[TestCaseClass]] and
+      (JsPath \ "IDESessionUUID").read[String] and
+      (JsPath \ "KaVEVersion").read[String] and
+      (JsPath \ "TriggeredAt").read[String] and
+      (JsPath \ "TriggeredBy").read[Int] and
+      (JsPath \ "Duration").readNullable[String] and
+      (JsPath \ "ActiveWindow").readNullable[String] and
+      (JsPath \ "ActiveDocument").readNullable[String]
+  )(TestClass.apply _)
+
+
   implicit val targetReads : Reads[TargetClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Project").read[String] and
       (JsPath \ "ProjectConfiguration").read[String] and
       (JsPath \ "Platform").read[String] and
@@ -652,10 +805,10 @@ object Main {
   )(TargetClass.apply _)
 
   implicit val buildReads : Reads[BuildClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Scope").read[String] and
-        (JsPath \ "Action").read[String] and
-        (JsPath \ "Targets").read[Seq[TargetClass]] and
+      (JsPath \ "Action").read[String] and
+      (JsPath \ "Targets").read[Seq[TargetClass]] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
       (JsPath \ "TriggeredAt").read[String] and
@@ -666,13 +819,13 @@ object Main {
   )(BuildClass.apply _)
 
   implicit val vc_ActionsReads : Reads[VC_ActionClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "ExecutedAt").read[String] and
-      (JsPath \ "ActionType").read[Int] 
+      (JsPath \ "ActionType").read[Int]
   )(VC_ActionClass.apply _)
 
   implicit val versionControlReads : Reads[VersionControlClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Actions").read[Seq[VC_ActionClass]] and
       (JsPath \ "Solution").read[String] and
       (JsPath \ "IDESessionUUID").read[String] and
@@ -685,19 +838,19 @@ object Main {
   )(VersionControlClass.apply _)
 
   implicit val editReads : Reads[EditClass] = (
-      (JsPath \ "$type").read[String] and
-//      (JsPath \ "Context2").read[String] and
+    (JsPath \ "$type").read[String] and
+      //      (JsPath \ "Context2").read[String] and
       (JsPath \ "NumberOfChanges").read[Int] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
       (JsPath \ "TriggeredAt").read[String] and
       (JsPath \ "TriggeredBy").read[Int] and
       (JsPath \ "Duration").readNullable[String] and
-      (JsPath \ "ActiveWindow").readNullable[String] 
+      (JsPath \ "ActiveWindow").readNullable[String]
   )(EditClass.apply _)
 
   implicit val windowReads : Reads[WindowClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Window").read[String] and
       (JsPath \ "Action").read[Int] and
       (JsPath \ "IDESessionUUID").read[String] and
@@ -710,7 +863,7 @@ object Main {
   )(WindowClass.apply _)
 
   implicit val activityReads : Reads[ActivityClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
       (JsPath \ "TriggeredAt").read[String] and
@@ -721,7 +874,7 @@ object Main {
   )(ActivityClass.apply _)
 
   implicit val navReads : Reads[NavClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Target").read[String] and
       (JsPath \ "Location").read[String] and
       (JsPath \ "TypeOfNavigation").read[Int] and
@@ -735,7 +888,7 @@ object Main {
   )(NavClass.apply _)
 
   implicit val debuggerReads : Reads[DebuggerClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Mode").read[Int] and
       (JsPath \ "Reason").read[String] and
       (JsPath \ "IDESessionUUID").read[String] and
@@ -748,7 +901,7 @@ object Main {
   )(DebuggerClass.apply _)
 
   implicit val solutionReads : Reads[SolutionClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Action").read[Int] and
       (JsPath \ "Target").read[String] and
       (JsPath \ "IDESessionUUID").read[String] and
@@ -761,7 +914,7 @@ object Main {
   )(SolutionClass.apply _)
 
   implicit val userReads : Reads[UserClass] = (
-      (JsPath \ "ProfileId").read[String] and
+    (JsPath \ "ProfileId").read[String] and
       (JsPath \ "Education").read[Int] and
       (JsPath \ "Position").read[Int] and
       (JsPath \ "ProjectsCourses").read[Boolean] and
@@ -786,7 +939,7 @@ object Main {
   )(UserClass.apply _)
 
   implicit val documentReads : Reads[DocumentClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "Document").readNullable[String] and
       (JsPath \ "Action").read[Int] and
       (JsPath \ "IDESessionUUID").read[String] and
@@ -799,10 +952,10 @@ object Main {
   )(DocumentClass.apply _)
 
   implicit val IDEStateReads : Reads[IDEStateClass] = (
-      (JsPath \ "$type").read[String] and
+    (JsPath \ "$type").read[String] and
       (JsPath \ "IDELifecyclePhase").read[Int] and
-        (JsPath \ "OpenWindows").read[Seq[String]] and
-        (JsPath \ "OpenDocuments").read[Seq[String]] and
+      (JsPath \ "OpenWindows").read[Seq[String]] and
+      (JsPath \ "OpenDocuments").read[Seq[String]] and
       (JsPath \ "IDESessionUUID").read[String] and
       (JsPath \ "KaVEVersion").read[String] and
       (JsPath \ "TriggeredAt").read[String] and
@@ -814,24 +967,24 @@ object Main {
 
 
 
-/*
-  implicit object CommandsClasspReads extends Format[CommandsClass] {
-    
-    def reads(json: JsValue) = CommandsClass(
-      (json \ "cid").as[String],
-      (json \ "commandid").as[String],
-      (json \ "idesessionuuid").as[String],
-      (json \ "kaveversion").as[String],
-      (json \ "triggeredat").as[String],
-      (json \ "triggeredby").as[String],
-      (json \ "duraction").as[String],
-      (json \ "activewindow").as[String],
-      (json \ "activedocument").as[String]
-    )
-    def writes(ts: CommandsClass) = JsObject(Seq())
-  }
+  /*
+   implicit object CommandsClasspReads extends Format[CommandsClass] {
+   
+   def reads(json: JsValue) = CommandsClass(
+   (json \ "cid").as[String],
+   (json \ "commandid").as[String],
+   (json \ "idesessionuuid").as[String],
+   (json \ "kaveversion").as[String],
+   (json \ "triggeredat").as[String],
+   (json \ "triggeredby").as[String],
+   (json \ "duraction").as[String],
+   (json \ "activewindow").as[String],
+   (json \ "activedocument").as[String]
+   )
+   def writes(ts: CommandsClass) = JsObject(Seq())
+   }
 
- */
+   */
 
   def open_DB(dbPath: String): Database = {
     val sqliConfig = new SQLiteConfig();
@@ -843,380 +996,418 @@ object Main {
   }
 
 
-    val commands = TableQuery[Commands]
-    val edits = TableQuery[Edits]
-    val systems = TableQuery[Systems]
-    val windows = TableQuery[Windows]
-    val activities = TableQuery[Activities]
-    val navs = TableQuery[Navs]
-    val debuggers = TableQuery[Debuggers]
-    val solutions = TableQuery[Solutions]
-    val users = TableQuery[Users]
-    val documents = TableQuery[Documents]
-    val builds = TableQuery[Builds]
-    val targets = TableQuery[Targets]
-    val ideStates = TableQuery[IDEStates]
-    val openWindows = TableQuery[OpenWindows]
-    val openDocs = TableQuery[OpenDocuments]
-    val versionControls = TableQuery[VersionControls]
-    val vc_actions = TableQuery[VC_Actions]
+  val commands = TableQuery[Commands]
+  val edits = TableQuery[Edits]
+  val systems = TableQuery[Systems]
+  val windows = TableQuery[Windows]
+  val activities = TableQuery[Activities]
+  val navs = TableQuery[Navs]
+  val debuggers = TableQuery[Debuggers]
+  val solutions = TableQuery[Solutions]
+  val users = TableQuery[Users]
+  val documents = TableQuery[Documents]
+  val builds = TableQuery[Builds]
+  val targets = TableQuery[Targets]
+  val ideStates = TableQuery[IDEStates]
+  val openWindows = TableQuery[OpenWindows]
+  val openDocs = TableQuery[OpenDocuments]
+  val versionControls = TableQuery[VersionControls]
+  val vc_actions = TableQuery[VC_Actions]
+  val tests = TableQuery[Tests]
+  val testCases = TableQuery[TestCases]
+  val finds = TableQuery[Finds]
 
   def create_schema(db:Database) = {
-      println("Creating schema...")
+    println("Creating schema...")
 
-      val schema = commands.schema ++ edits.schema ++ systems.schema ++
-         windows.schema ++ activities.schema ++ navs.schema ++ debuggers.schema ++ solutions.schema ++ users.schema ++
-         documents.schema ++ builds.schema ++ targets.schema ++
-         ideStates.schema ++ openDocs.schema ++ openWindows.schema ++
-         versionControls.schema ++ vc_actions.schema
+    val schema = commands.schema ++ edits.schema ++ systems.schema ++
+    windows.schema ++ activities.schema ++ navs.schema ++ debuggers.schema ++ solutions.schema ++ users.schema ++
+    documents.schema ++ builds.schema ++ targets.schema ++
+    ideStates.schema ++ openDocs.schema ++ openWindows.schema ++
+    versionControls.schema ++ vc_actions.schema ++ tests.schema ++ testCases.schema ++ finds.schema
 
-      try {
-        Await.result(db.run(DBIO.seq(
-          schema.drop
-        )), Duration.Inf)
-      }
-      catch {
-        case _: Throwable => println(Console.RED +  "Unable to drop tables " + Console.RESET )
-      }
-
-      try {
-        Await.result(db.run(DBIO.seq(
-          schema.create
-        )), Duration.Inf)
-      }
-      catch {
-        case _: Throwable => println(Console.RED +  "Unable to create tables " + Console.RESET )
-      }
+    try {
+      Await.result(db.run(DBIO.seq(
+        schema.drop
+      )), Duration.Inf)
+    }
+    catch {
+      case _: Throwable => println(Console.RED +  "Unable to drop tables " + Console.RESET )
     }
 
-    def Insert_Commands(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting commands")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.CommandEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-        json.as[CommandsClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        commands ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
+    try {
+      Await.result(db.run(DBIO.seq(
+        schema.create
+      )), Duration.Inf)
     }
-
-    def Insert_Windows(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting windows")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.WindowEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[WindowClass]
-      }.toList
-      val insert = DBIO.seq(
-        windows ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
+    catch {
+      case _: Throwable => println(Console.RED +  "Unable to create tables " + Console.RESET )
     }
-
-    def Insert_Activities(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting activities")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.ActivityEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[ActivityClass]
-      }.toList
-      println("To insert activites" , toInsert.size)
-      val insert = DBIO.seq(
-        activities ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-
-    def Insert_Edits(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting edits")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.EditEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[EditClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        edits ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Systems(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting systems")
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.SystemEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[SystemClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        systems ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Navs(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting navs")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.NavigationEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[NavClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        navs ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Debuggers(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting debugger")
-
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.DebuggerEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[DebuggerClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        debuggers ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Solutions(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting solutions")
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.SolutionEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[SolutionClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        solutions ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Users(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting users")
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.UserProfiles.UserProfileEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[UserClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        users ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_Documents(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting documents")
-      val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.DocumentEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[DocumentClass]
-      }.toList
-
-
-      val insert = DBIO.seq(
-        documents ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_VersionControls(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting version controls")
-
-      val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VersionControlEvents.VersionControlEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[VersionControlClass]
-      }.toList
-
-      val toInsert = tuplesToInsert.map(toVersionControlClassDB(_))
-      val actionsToInsert = tuplesToInsert.map(toVC_ActionsDB(_)).flatten
-
-      val insert = DBIO.seq(
-        versionControls ++= toInsert,
-        vc_actions ++= actionsToInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-
-    def Insert_Builds(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting builds")
-
-      val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.BuildEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[BuildClass]
-      }.toList
-
-      val toInsert = tuplesToInsert.map(toBuildClassDB(_))
-      val targetsToInsert = tuplesToInsert.map(toTargetClassDB(_)).flatten
-
-      val insert = DBIO.seq(
-        builds ++= toInsert,
-        targets ++= targetsToInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-    def Insert_IDEStates(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-      println("Inserting ide states")
-
-
-      val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.IDEStateEvent, KaVE.Commons\"").map { t=>
-        val json = t._2
-//        println(Json.prettyPrint(t._2))
-        json.as[IDEStateClass]
-      }.toList
-
-      val toInsert = tuplesToInsert.map(toIDEStateClassDB(_))
-      val winsToInsert = tuplesToInsert.map(toIDEStateWinsDB(_)).flatten
-      val docsToInsert = tuplesToInsert.map(toIDEStateDocsDB(_)).flatten
-
-      val insert = DBIO.seq(
-        openWindows ++= winsToInsert,
-        openDocs ++= docsToInsert,
-        ideStates ++= toInsert
-      )
-      Await.result(db.run(insert), Duration.Inf)
-    }
-
-  def Insert(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
-    Insert_Edits(db, tuples)
-    Insert_Systems(db, tuples)
-    Insert_Windows(db, tuples)
-    Insert_Activities(db, tuples)
-    Insert_Navs(db, tuples)
-    Insert_Debuggers(db, tuples)
-    Insert_Users(db, tuples)
-    Insert_Solutions(db, tuples)
-    Insert_Documents(db, tuples)
-    Insert_Builds(db, tuples)
-    Insert_IDEStates(db, tuples)
-    Insert_Commands(db, tuples)
-    Insert_VersionControls(db, tuples)
   }
 
-  def getRecursiveListOfFiles(dir: File): Array[File] = {
+  def Insert_Commands(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting commands")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.CommandEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      json.as[CommandsClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      commands ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Windows(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting windows")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.WindowEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[WindowClass]
+    }.toList
+    val insert = DBIO.seq(
+      windows ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Activities(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting activities")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.ActivityEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[ActivityClass]
+    }.toList
+    println("To insert activites" , toInsert.size)
+    val insert = DBIO.seq(
+      activities ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+
+  def Insert_Edits(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting edits")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.EditEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[EditClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      edits ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Systems(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting systems")
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.SystemEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[SystemClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      systems ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Navs(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting navs")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.NavigationEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[NavClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      navs ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Debuggers(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting debugger")
+
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.DebuggerEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[DebuggerClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      debuggers ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Solutions(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting solutions")
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.SolutionEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[SolutionClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      solutions ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Users(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting users")
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.UserProfiles.UserProfileEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[UserClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      users ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Documents(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting documents")
+    val toInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.DocumentEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[DocumentClass]
+    }.toList
+
+
+    val insert = DBIO.seq(
+      documents ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_VersionControls(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting version controls")
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VersionControlEvents.VersionControlEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[VersionControlClass]
+    }.toList
+
+    val toInsert = tuplesToInsert.map(toVersionControlClassDB(_))
+    val actionsToInsert = tuplesToInsert.map(toVC_ActionsDB(_)).flatten
+
+    val insert = DBIO.seq(
+      versionControls ++= toInsert,
+      vc_actions ++= actionsToInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+
+  def Insert_Builds(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting builds")
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.BuildEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[BuildClass]
+    }.toList
+
+    val toInsert = tuplesToInsert.map(toBuildClassDB(_))
+    val targetsToInsert = tuplesToInsert.map(toTargetClassDB(_)).flatten
+
+    val insert = DBIO.seq(
+      builds ++= toInsert,
+      targets ++= targetsToInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_IDEStates(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting ide states")
+
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.IDEStateEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //        println(Json.prettyPrint(t._2))
+      json.as[IDEStateClass]
+    }.toList
+
+    val toInsert = tuplesToInsert.map(toIDEStateClassDB(_))
+    val winsToInsert = tuplesToInsert.map(toIDEStateWinsDB(_)).flatten
+    val docsToInsert = tuplesToInsert.map(toIDEStateDocsDB(_)).flatten
+
+    val insert = DBIO.seq(
+      openWindows ++= winsToInsert,
+      openDocs ++= docsToInsert,
+      ideStates ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Finds(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println("Inserting finds")
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VisualStudio.FindEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //println(Json.prettyPrint(t._2))
+      json.as[FindClass]
+    }.toList
+    val insert = DBIO.seq(
+      finds ++= tuplesToInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+  def Insert_Completions(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+    println(("Completions. To be implemented..................................................................", tuples.size ))
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.CompletionEvents.CompletionEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+      //println(Json.prettyPrint(t._2))
+      //json.as[IDEStateClass]
+    }.toList
+    
+/*
+    val toInsert = tuplesToInsert.map(toIDEStateClassDB(_))
+    val winsToInsert = tuplesToInsert.map(toIDEStateWinsDB(_)).flatten
+    val docsToInsert = tuplesToInsert.map(toIDEStateDocsDB(_)).flatten
+
+    val insert = DBIO.seq(
+      openWindows ++= winsToInsert,
+      openDocs ++= docsToInsert,
+      ideStates ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+ */
+  }
+
+  def Insert_Tests(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+
+    val tuplesToInsert = tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.TestRunEvents.TestRunEvent, KaVE.Commons\"").map { t=>
+      val json = t._2
+//      println(Json.prettyPrint(t._2))
+      json.as[TestClass]
+    }.toList
+    
+    val toInsert = tuplesToInsert.map(toTestClassDB(_))
+    val casesToInsert = tuplesToInsert.map(toTestCaseClassDB(_)).flatten
+
+    val insert = DBIO.seq(
+      testCases ++= casesToInsert,
+      tests ++= toInsert
+    )
+    Await.result(db.run(insert), Duration.Inf)
+  }
+
+
+
+  def Insert(db:Database, tuples: Seq[(JsValue, JsValue)]) = {
+
+    Insert_Completions(db, tuples)
+
+    Insert_Activities(db, tuples)
+    Insert_Commands(db, tuples)
+// completion
+    Insert_Navs(db, tuples)
+    Insert_Systems(db, tuples)
+
+    Insert_Tests(db, tuples)
+    Insert_Users(db, tuples)
+    Insert_VersionControls(db, tuples)
+
+    Insert_Builds(db, tuples)
+    Insert_Debuggers(db, tuples)
+    Insert_Documents(db, tuples)
+    Insert_Edits(db, tuples)
+
+    Insert_Finds(db, tuples)
+
+    Insert_IDEStates(db, tuples)
+    Insert_Solutions(db, tuples)
+    Insert_Windows(db, tuples)
+  }
+
+  def getRecursiveListOfFiles(dir: File): Seq[File] = {
     val these = dir.listFiles
     these ++ these.filter(_.isDirectory).flatMap(getRecursiveListOfFiles)
   }
- //////////////////////////////////////////////
+  //////////////////////////////////////////////
+
+  def Process_Zip_File(db:Database, zipFile: File) {
+
+    println(("To process zip file: ", zipFile.getPath(), " size ", zipFile.length))
+    val rootzip = new java.util.zip.ZipFile(zipFile.getPath())
+
+    val entries = rootzip.entries.asScala
+
+    val tuples = entries.map{ e =>
+      //      println(e)
+      val is = rootzip.getInputStream(e)
+      val source = scala.io.Source.fromInputStream(is).mkString
+      val json: JsValue = Json.parse(source)
+      val jtype = (json \ "$type" ).get
+      (jtype, json)
+    }.toSeq
+
+    tuples.toList.map(_._1).groupBy(identity).mapValues(_.size).toSeq.sortWith(_._1.toString < _._1.toString).foreach{ t =>
+      println(t)
+    }
+
+
+    Insert(db, tuples)
+  }
+
+  def Process_File(db:Database, path: String) {
+
+      val file = new File(path)
+      val files:Seq[File] =
+        if (file.isDirectory) {
+          getRecursiveListOfFiles(new File(path))
+            .filter{s => s.getName().matches(".+zip$")}.sorted
+        } else {
+          if (!file.getName.matches(".+zip$"))
+            throw new IllegalStateException("Filename is not a zipfile: "+ path);
+          Seq(file)
+        }
+
+    files.foreach{ f =>
+      println("Processing file ", f.getName)
+      Process_Zip_File(db, f)
+    }
+  }
 
   def main(args: Array[String]) {
 
-    val regex = """\.zip""".r 
-
-    //    val path = "/home/msr17-events/Events-170301/2016-05-09"
-    val path = "/home/msr17-events/Events-170301"
-
-    val files = getRecursiveListOfFiles(new File(path))
-      .filter{s => s.getName().matches(".+zip$")}.sorted
-
-    val db = open_DB("/tmp/events.db")
-
-    create_schema(db)
-
-    def Process_File(zipFile: String, db:Database) {
-
-      println("To process zip file: ", zipFile)
-      val rootzip = new java.util.zip.ZipFile(zipFile)
-
-      val entries = rootzip.entries.asScala
-
-      val tuples = entries.map{ e =>
-//      println(e)
-        val is = rootzip.getInputStream(e)
-        val source = scala.io.Source.fromInputStream(is).mkString
-        val json: JsValue = Json.parse(source)
-        val jtype = (json \ "$type" ).get
-        (jtype, json)
-      }.toSeq
-
-      tuples.toList.map(_._1).groupBy(identity).mapValues(_.size).foreach{ t =>
-        println(t)
-      }
-
-      /*
-
-      tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.TestRunEvents.TestRunEvent, KaVE.Commons\"").take(4).foreach { t=>
-        println(Json.prettyPrint(t._2))
-      }
-      tuples.filter(_._1.toString == "\"KaVE.Commons.Model.Events.VersionControlEvents.VersionControlEvent, KaVE.Commons\"").take(4).foreach { t=>
-        println(Json.prettyPrint(t._2))
-      }
-       */
-
-//      Insert_IDEStates(db, tuples)
-      Insert(db, tuples)
+    if (args.size == 0) {
+      throw new IllegalStateException("No options passed. Usage <command> dbPath [filesToProces]");
     }
+    val dbPath = args(0)
+    val fileDB = new File(dbPath)
+    val createSchema = ! (fileDB.exists)
 
-//    Process_File("/home/msr17-events/Events-170301/2016-08-25/0.zip", db)
+    val db = open_DB(dbPath)
 
-    files.foreach{ f =>
-
-      if (f.length < 75 * 1000 * 1000) {
-        //println("...")
-//        Process_File(f.getPath, db)
-      } else if(f.length < 100 * 1000 * 1000) {
-        //println("...+")
-        //Process_File(f.getPath, db)
-      } else if(f.length < 150 * 1000 * 1000) {
-        println("....++")
-        //Process_File(f.getPath, db)
-      } else if(f.length < 200 * 1000 * 1000) {
-        println("....+++", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 225 * 1000 * 1000) {
-        println("....+++&&", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 231 * 1000 * 1000) {
-        println("....+++&&----", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 250 * 1000 * 1000) {
-        println("....+++&&----+++", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 300 * 1000 * 1000) {
-        //println("....+++&&----+++@@@@", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 310 * 1000 * 1000) {
-        //println("....+++&&----+++@@@@", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 320 * 1000 * 1000) {
-        //println("....+++&&----+++@@@@---", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 350 * 1000 * 1000) {
-        //println("....+++&&----+++@@@@---", f.getPath, f.length)
-        //Process_File(f.getPath, db)
-      } else if(f.length < 400 * 1000 * 1000) {
-        println("....+++&&----+++@@@@---", f.getPath, f.length)
-        Process_File(f.getPath, db)
-      } else {
-        println(f.length,"*******************************************Doing", f.getPath, f.length)
-      }
-
+    if (createSchema)
+      create_schema(db)
+    
+    val paths = args.drop(1)
+    paths.foreach{ p =>
+      Process_File(db, p)
     }
 
     db.close
