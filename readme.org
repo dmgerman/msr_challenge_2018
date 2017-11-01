@@ -32,6 +32,7 @@ Unknown = 0,
         Reset
 #+END_EXAMPLE
 
+#+BEGIN_SRC sql
 create table vctypes(actiontype int, action char(20));
 insert into vctypes values (0, 'Unknown');
 insert into vctypes values (1, 'Branch');
@@ -46,6 +47,18 @@ insert into vctypes values (9, 'Rebase');
 insert into vctypes values (10, 'RebaseFinished');
 insert into vctypes values (11, 'Reset);
 
+#+END_SRC
+
+** navigation events
+
+
+#+BEGIN_SRC sql
+create table navtypes(navtype int, navaction char(20));
+insert into navtypes values (0, 'Unknown');
+insert into navtypes values (1, 'CtrlClick');
+insert into navtypes values (2, 'Click');
+insert into navtypes values (3, 'Keyboard');
+#+END_SRC    
 
 
 ** rest
@@ -97,3 +110,29 @@ system events:
         RemoteDisconnect
     }
 #+END_EXAMPLE
+
+
+* sqlite database schema
+
+#+BEGIN_SRC sql
+CREATE TABLE "commands" ("typeid" TEXT NOT NULL,"commandid" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "edits" ("typeid" TEXT NOT NULL,"numberchanges" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT);
+CREATE TABLE "systems" ("typeid" TEXT NOT NULL,"type" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "windows" ("typeid" TEXT NOT NULL,"window" TEXT NOT NULL,"action" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT NOT NULL,"activedocument" TEXT);
+CREATE TABLE "activities" ("typeid" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT NOT NULL,"activedocument" TEXT);
+CREATE TABLE "navigations" ("typeid" TEXT NOT NULL,"target" TEXT NOT NULL,"location" TEXT NOT NULL,"navtype" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT NOT NULL,"activedocument" TEXT);
+CREATE TABLE "debuggers" ("typeid" TEXT NOT NULL,"mode" Int NOT NULL,"reason" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "solutions" ("typeid" TEXT NOT NULL,"action" Int NOT NULL,"target" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT NOT NULL,"activedocument" TEXT);
+CREATE TABLE "users" ("profileid" TEXT NOT NULL,"education" Int NOT NULL,"position" Int NOT NULL,"projectsCourses" Boolean NOT NULL,"projectsPersonal" Boolean NOT NULL,"projectsSharedSmall" Boolean NOT NULL,"projectsSharedMedium" Boolean NOT NULL,"projectsSharedLarge" Boolean NOT NULL,"teamsSolo" Boolean NOT NULL,"teamsSmall" Boolean NOT NULL,"teamsMedium" Boolean NOT NULL,"teamsLarge" Boolean NOT NULL,"codeReviews" Int NOT NULL,"programmingGeneral" Int NOT NULL,"programmingCSharp" Int NOT NULL,"comment" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "documents" ("typeid" TEXT NOT NULL,"document" TEXT,"action" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT NOT NULL,"activedocument" TEXT);
+CREATE TABLE "builds" ("typeid" TEXT NOT NULL,"scope" TEXT NOT NULL,"action" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "targets" ("idesessionuuid" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"targettype" TEXT NOT NULL,"project" TEXT NOT NULL,"projectconf" TEXT NOT NULL,"platform" TEXT NOT NULL,"solutionconf" TEXT NOT NULL,"startedAt" TEXT NOT NULL,"duration" TEXT NOT NULL,"successful" Boolean NOT NULL);
+CREATE TABLE "idestates" ("typeid" TEXT NOT NULL,"idelifecycle" Int NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "opendocuments" ("idesessionuuid" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"openwindow" TEXT NOT NULL);
+CREATE TABLE "openwindows" ("idesessionuuid" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"openwindow" TEXT NOT NULL);
+CREATE TABLE "versioncontrols" ("typeid" TEXT NOT NULL,"solution" TEXT NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "vc_action" ("idesessionuuid" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"testtype" TEXT NOT NULL,"executedat" TEXT NOT NULL,"actiontype" TEXT NOT NULL);
+CREATE TABLE "tests" ("typeid" TEXT NOT NULL,"wasaborted" Boolean NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+CREATE TABLE "testcases" ("idesessionuuid" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"testcasetype" TEXT NOT NULL,"testmethod" TEXT NOT NULL,"parameters" TEXT NOT NULL,"duration" TEXT NOT NULL,"result" Int NOT NULL);
+CREATE TABLE "finds" ("typeid" TEXT NOT NULL,"type" Boolean NOT NULL,"idesessionuuid" TEXT NOT NULL,"kaveversion" TEXT NOT NULL,"triggeredat" TEXT NOT NULL,"triggeredby" Int NOT NULL,"duration" TEXT,"activewindow" TEXT,"activedocument" TEXT);
+#+END_SRC
